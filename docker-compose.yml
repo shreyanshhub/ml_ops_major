@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  ml_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow_server:5000
+    depends_on:
+      - mlflow_server
+    volumes:
+      - ./artifacts:/app/artifacts
+    command: ["python", "major_d24csa006.py"]
+
+  mlflow_server:
+    image: mlflow/mlflow
+    environment:
+      - MLFLOW_TRACKING_URI=http://0.0.0.0:5000
+      - ARTIFACT_ROOT=/mlflow/artifacts
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+      - ./artifacts:/mlflow/artifacts
